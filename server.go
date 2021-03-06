@@ -10,15 +10,13 @@ import (
 )
 
 type Todo struct {
-	ID int  `json:"id"`
+	ID     int    `json:"id"`
 	Title  string `json:"title"`
-	Status  string `json:"status"`
-
-
+	Status string `json:"status"`
 }
 
 var todos = map[int]*Todo{
-	1: &Todo{ID:1 , Title:"I am Darunee", Status:"active"},
+	1: &Todo{ID: 1, Title: "I am Darunee", Status: "active"},
 }
 
 func helloHandler(c echo.Context) error {
@@ -28,14 +26,13 @@ func helloHandler(c echo.Context) error {
 
 }
 
-
 func getTodosHandler(c echo.Context) error {
-	   items := []*Todo{}
-	   for _,item := rang todos{
-          items = append(items, item)
+	items := []*Todo{}
+	for _, item := range todos {
+		items = append(items, item)
 
-	   }
-	   return c.JSON(http.StatusOK,items)
+	}
+	return c.JSON(http.StatusOK, items)
 
 }
 
