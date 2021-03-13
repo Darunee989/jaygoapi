@@ -29,11 +29,38 @@ func helloHandler(c echo.Context) error {
 }
 
 func getTodosHandler(c echo.Context) error {
+
 	items := []*Todo{}
-	for _, item := range todos {
+
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal("Connect to database error", err)
+	}
+	defer db.Close()
+
+	stmt, err := db.Prepare("SELECT id, title, status FROM todos order by id asc")
+	if err != nil {
+		log.Fatal("can't prepare query all todos statment", err)
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Fatal("can't query all todos", err)
+	}
+
+	for rows.Next() { //loop data to show in table
+		var id int
+		var title, status string
+
+		err := rows.Scan(&id, &title, &status)
+		if err != nil {
+			log.Fatal("can't Scan row into variable", err)
+		}
+		item := &Todo{ID: id, Title: title, Status: status}
 		items = append(items, item)
 
 	}
+
 	return c.JSON(http.StatusOK, items)
 
 }
